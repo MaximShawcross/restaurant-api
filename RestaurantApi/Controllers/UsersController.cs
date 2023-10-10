@@ -1,15 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestoranApi.Models;
 
 namespace RestoranApi.Controllers
 {
-    [Route("[controller]")]
+    [Route("user")]
     [ApiController]
     public class UsersController : ControllerBase
     {
@@ -19,6 +14,13 @@ namespace RestoranApi.Controllers
         {
             _context = context;
         }
+
+        // [HttpGet("user-with-role")]
+        // public async Task<ActionResult<IEnumerable<User>>> UserRoles()
+        // {
+        //     var urs = _context.Users.Include(r => r.Role).ToList();
+        //     return urs;
+        // }
 
         // GET: api/Users
         [HttpGet]

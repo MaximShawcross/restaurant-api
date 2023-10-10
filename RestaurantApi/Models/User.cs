@@ -9,5 +9,9 @@ public class User
     public DateTime? LastLoggedIn { get; set; }
     public string? Mobile_No { get; set; }
     public string? Password { get; set; }
-    public int? Role_ID { get; set; }
+
+    public int? RoleId { get; set; }
+    // public Role? Role { get; set; }
+    // public ICollection<Role> Roles { get; } = new List<Role>();
+
 }
