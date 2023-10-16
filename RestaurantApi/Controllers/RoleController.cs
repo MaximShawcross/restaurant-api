@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using RestoranApi.Models;
@@ -21,22 +15,10 @@ namespace RestoranApi.Controllers
             _context = context;
         }
         
-        [HttpGet("user-roles")]
-        public async Task<ActionResult<IEnumerable<Role>>> RolesToUser()
-        {
-            var res = _context.Roles.Include((r => r.Users));
-
-            return await res.ToListAsync();
-        }
-
         // GET: api/Role
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Role>>> GetRoles()
         {
-          if (_context.Roles == null)
-          {
-              return NotFound();
-          }
             return await _context.Roles.ToListAsync();
         }
 
@@ -44,10 +26,6 @@ namespace RestoranApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Role>> GetRole(int id)
         {
-          if (_context.Roles == null)
-          {
-              return NotFound();
-          }
             var role = await _context.Roles.FindAsync(id);
 
             if (role == null)
@@ -94,10 +72,6 @@ namespace RestoranApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
-          if (_context.Roles == null)
-          {
-              return Problem("Entity set 'RestaurantContext.Roles'  is null.");
-          }
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
 
@@ -108,10 +82,6 @@ namespace RestoranApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
-            if (_context.Roles == null)
-            {
-                return NotFound();
-            }
             var role = await _context.Roles.FindAsync(id);
             if (role == null)
             {
