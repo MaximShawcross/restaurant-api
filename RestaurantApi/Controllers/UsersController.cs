@@ -1,6 +1,10 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RestoranApi.DTOs;
 using RestoranApi.Models;
+using RestoranApi.Services;
+using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Controllers
 {
@@ -9,26 +13,33 @@ namespace RestoranApi.Controllers
     public class UsersController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private ILoginService _loginService;
 
-        public UsersController(RestaurantContext context)
+        public UsersController(RestaurantContext context, ILoginService loginService)
         {
             _context = context;
+            _loginService = loginService;
         }
+        
+        [AllowAnonymous]
+        [HttpPost("login")]
+        public async Task<JwtToken> Login([FromBody] UserLoginDto userDto)
+        {
+            User user = await _loginService.Authenticate(userDto);
+            string token = _loginService.CreateToken(user);
 
-        // [HttpGet("user-with-role")]
-        // public async Task<ActionResult<IEnumerable<User>>> UserRoles()
-        // {
-        //     var urs = _context.Users.Include(r => r.Role).ToList();
-        //     return urs;
-        // }
+            return new JwtToken() {Token = token};
+        }
 
         // GET: api/Users
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
             return await _context.Users.ToListAsync();
         }
 
+        
         // GET: api/Users/5
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
@@ -48,7 +59,7 @@ namespace RestoranApi.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
-            if (id != user.ID)
+            if (id != user.Id)
             {
                 return BadRequest();
             }
@@ -82,7 +93,7 @@ namespace RestoranApi.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUser", new { id = user.ID }, user);
+            return CreatedAtAction("GetUser", new { id = user.Id }, user);
         }
 
         // DELETE: api/Users/5
@@ -103,7 +114,7 @@ namespace RestoranApi.Controllers
 
         private bool UserExists(int id)
         {
-            return (_context.Users?.Any(e => e.ID == id)).GetValueOrDefault();
+            return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
