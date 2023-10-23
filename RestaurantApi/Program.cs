@@ -9,22 +9,27 @@ var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
-{ // MyAllowSpecificOrigins
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-        policy  =>
-        {
-            policy.WithOrigins("http://localhost:3000");
-        });
-});
+// builder.Services.AddCors(options =>
+// { // MyAllowSpecificOrigins
+//     options.AddPolicy(name: MyAllowSpecificOrigins,
+//         policy  =>
+//         {
+//             policy.WithOrigins("http://localhost:3000", "http://127.0.0.1:5500/", "http://127.0.0.1:3000");
+//         });
+// });
 
 // Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<ILoginService, LoginService>();
-
 builder.Services.AddDbContext<RestaurantContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
+builder.Services.AddCors(options => options.AddPolicy(name: MyAllowSpecificOrigins,
+    policy =>
+    {
+        policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowAnyOrigin();
+    })
+);
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 {
@@ -46,7 +51,7 @@ builder.Services.AddSwaggerGen();
 
 
 var app = builder.Build();
-
+app.UseCors(MyAllowSpecificOrigins);
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -54,11 +59,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors(MyAllowSpecificOrigins);
-
 app.UseHttpsRedirection();
-app.UseAuthorization();
+
 app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 

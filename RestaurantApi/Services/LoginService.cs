@@ -29,7 +29,6 @@ public class LoginService : ILoginService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Name),
-            new Claim("RoleId", $"{user.RoleId}"),
             new Claim("CurrentDomain", $"{user.CurrentDomain}"),
         };
 
