@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RestoranApi.DTOs;
 using RestoranApi.Models;
+using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Controllers
 {
@@ -9,10 +11,18 @@ namespace RestoranApi.Controllers
     public class UserRolesController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private IUserRolesService _userRolesService;
 
-        public UserRolesController(RestaurantContext context)
+        public UserRolesController(RestaurantContext context, IUserRolesService userRolesService)
         {
             _context = context;
+            _userRolesService = userRolesService;
+        }
+        
+        [HttpPost("singleUserWithRoles")]
+        public async Task<IEnumerable<UserRoles>> GetUserRoles([FromBody] UserDto user)
+        {
+            return await _userRolesService.GetUserRoles(user);
         }
 
         [HttpGet("allUsersWithRoles")]

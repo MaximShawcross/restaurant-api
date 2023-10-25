@@ -9,19 +9,12 @@ var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
 
-// builder.Services.AddCors(options =>
-// { // MyAllowSpecificOrigins
-//     options.AddPolicy(name: MyAllowSpecificOrigins,
-//         policy  =>
-//         {
-//             policy.WithOrigins("http://localhost:3000", "http://127.0.0.1:5500/", "http://127.0.0.1:3000");
-//         });
-// });
-
 // Add services to the container.
+
+#region configServises
+
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddDbContext<RestaurantContext>(option =>
     option.UseSqlServer(builder.Configuration.GetConnectionString("DB")));
 builder.Services.AddCors(options => options.AddPolicy(name: MyAllowSpecificOrigins,
@@ -44,7 +37,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     };
 });
-    
+#endregion
+
+#region services
+builder.Services.AddScoped<ILoginService, LoginService>();
+builder.Services.AddScoped<IUserRolesService, UserRolesService>();
+#endregion
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

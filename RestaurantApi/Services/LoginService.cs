@@ -29,7 +29,7 @@ public class LoginService : ILoginService
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Name),
-            new Claim("CurrentDomain", $"{user.CurrentDomain}"),
+            new Claim("CurrentDomain", $"{user.CurrentDomainId}"),
         };
 
         var token = new JwtSecurityToken(_config["Jwt:Issuer"]

@@ -34,15 +34,17 @@ namespace RestoranApi.Controllers
         // GET: api/Users
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            
+            return Ok(UsersToDto(users));
         }
 
         
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserDto>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -51,7 +53,7 @@ namespace RestoranApi.Controllers
                 return NotFound();
             }
 
-            return user;
+            return UserToDto(user);
         }
 
         // PUT: api/Users/5
@@ -115,6 +117,29 @@ namespace RestoranApi.Controllers
         private bool UserExists(int id)
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private static UserDto UserToDto(User user)
+        {
+            return new UserDto()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                CurrentDomainId = user.CurrentDomainId,
+                Name = user.Name
+            };
+        }
+        
+        private static IEnumerable<UserDto> UsersToDto(IEnumerable<User> users)
+        {
+            List<UserDto> userDtoList = new List<UserDto>();
+
+            foreach (User user in users)
+            {
+                userDtoList.Add(UserToDto(user));
+            }
+
+            return userDtoList;
         }
     }
 }
