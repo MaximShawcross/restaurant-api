@@ -77,12 +77,18 @@ namespace RestoranApi.Controllers
         // POST: api/UserRoles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserRoles>> PostUserRoles(UserRoles userRoles)
+        public async Task<ActionResult<UserRoles>> PostUserRoles([FromBody] UserRolesDto  userRolesDto)
         {
-            _context.UserRoles.Add(userRoles);
+            UserRoles userRole = new UserRoles()
+            {
+                RoleId = userRolesDto.RoleId,
+                UserId = userRolesDto.UserId
+            };
+            
+            _context.UserRoles.Add(userRole);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserRoles", new { id = userRoles.Id }, userRoles);
+            return CreatedAtAction("GetUserRoles", new { id = userRole.Id }, userRole);
         }
 
         // DELETE: api/UserRoles/5
@@ -104,6 +110,15 @@ namespace RestoranApi.Controllers
         private bool UserRolesExists(int id)
         {
             return (_context.UserRoles?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private UserRolesDto UserRolesToDto(UserRoles userRoles)
+        {
+            return new UserRolesDto()
+            {
+                RoleId = userRoles.RoleId,
+                UserId = userRoles.UserId
+            };
         }
     }
 }
