@@ -46,14 +46,21 @@ namespace RestoranApi.Controllers
         // PUT: api/UserRoles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserRoles(int id, UserRoles userRoles)
+        public async Task<IActionResult> PutUserRoles(int id, UserRolesDto userRoleDto)
         {
-            if (id != userRoles.Id)
+            UserRoles userRole = new UserRoles()
+            {
+                Id = id,
+                RoleId = userRoleDto.RoleId,
+                UserId = userRoleDto.UserId
+            };
+            
+            if (id != userRole.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userRoles).State = EntityState.Modified;
+            _context.Entry(userRole).State = EntityState.Modified;
 
             try
             {
