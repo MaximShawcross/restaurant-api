@@ -19,10 +19,10 @@ namespace RestoranApi.Controllers
             _userRolesService = userRolesService;
         }
         
-        [HttpPost("singleUserWithRoles")]
-        public async Task<IEnumerable<UserRoles>> GetUserRoles([FromBody] UserDto user)
+        [HttpPost("singleUserWithRoles/{id}")]
+        public async Task<User> GetUserRoles(int id)
         {
-            return await _userRolesService.GetUserRoles(user);
+            return await _userRolesService.GetUserRoles(id);
         }
 
         [HttpGet("allUsersWithRoles")]

@@ -5,5 +5,5 @@ namespace RestoranApi.Services.Interfaces;
 
 public interface IUserRolesService
 {
-    public Task<IEnumerable<UserRoles>> GetUserRoles(UserDto user);
+    public Task<User> GetUserRoles(int id);
 }

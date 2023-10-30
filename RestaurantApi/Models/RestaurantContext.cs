@@ -18,10 +18,9 @@ public class RestaurantContext : DbContext
         modelBuilder.Entity<Role>().ToTable("stbl_System_Roles");
         modelBuilder.Entity<UserRoles>().ToTable("stbl_System_UserRoles");
 
-        // modelBuilder.Entity<User>()
-        //     .HasMany(u => u.Roles)
-        //     .WithOne(r => r.User)
-        //     .HasForeignKey("Id")
-        //     .IsRequired(true);
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Roles)
+            .WithMany(r => r.Users)
+            .UsingEntity<UserRoles>();
     }
 }

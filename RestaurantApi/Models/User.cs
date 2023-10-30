@@ -10,7 +10,5 @@ public class User
     public string? Mobile_No { get; set; }
     public string? Password { get; set; }
 
-    // public Role? Role { get; set; }
-    // public ICollection<Role> Roles { get; } = new List<Role>();
-
+    public List<Role> Roles { get; } = new();
 }
