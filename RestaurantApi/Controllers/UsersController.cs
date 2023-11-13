@@ -14,11 +14,13 @@ namespace RestoranApi.Controllers
     {
         private readonly RestaurantContext _context;
         private ILoginService _loginService;
+        private readonly IRoleToDto _roleToDtoService;
 
-        public UsersController(RestaurantContext context, ILoginService loginService)
+        public UsersController(RestaurantContext context, ILoginService loginService, IRoleToDto roleToDtoService)
         {
             _context = context;
             _loginService = loginService;
+            _roleToDtoService = roleToDtoService;
         }
         
         [AllowAnonymous]
@@ -30,19 +32,37 @@ namespace RestoranApi.Controllers
 
             return new JwtToken() {Token = token};
         }
+        
+        [HttpGet("GetUsersWithAllTheirRoles")]
+        public async Task<ActionResult<IEnumerable<UserWithRolesDto>>> GetUserRoles()
+        {
+            
+            return await _context.Users.Include(u => u.Roles)
+                .Select(u => new UserWithRolesDto()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    CurrentDomainId = u.CurrentDomainId,
+                    Name = u.Name,
+                    Roles = _roleToDtoService.RoleToDto(u.Roles).ToList()
+                })
+                .ToListAsync();
+        }
 
         // GET: api/Users
         [HttpGet]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<User>>> GetUsers()
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            var users = await _context.Users.ToListAsync();
+            
+            return Ok(UsersToDto(users));
         }
 
         
         // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetUser(int id)
+        public async Task<ActionResult<UserDto>> GetUser(int id)
         {
             var user = await _context.Users.FindAsync(id);
 
@@ -51,7 +71,7 @@ namespace RestoranApi.Controllers
                 return NotFound();
             }
 
-            return user;
+            return UserToDto(user);
         }
 
         // PUT: api/Users/5
@@ -115,6 +135,29 @@ namespace RestoranApi.Controllers
         private bool UserExists(int id)
         {
             return (_context.Users?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private static UserDto UserToDto(User user)
+        {
+            return new UserDto()
+            {
+                Id = user.Id,
+                Email = user.Email,
+                CurrentDomainId = user.CurrentDomainId,
+                Name = user.Name
+            };
+        }
+        
+        private static IEnumerable<UserDto> UsersToDto(IEnumerable<User> users)
+        {
+            List<UserDto> userDtoList = new List<UserDto>();
+
+            foreach (User user in users)
+            {
+                userDtoList.Add(UserToDto(user));
+            }
+
+            return userDtoList;
         }
     }
 }

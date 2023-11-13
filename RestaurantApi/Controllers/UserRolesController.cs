@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using RestoranApi.DTOs;
 using RestoranApi.Models;
+using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Controllers
 {
@@ -9,41 +11,38 @@ namespace RestoranApi.Controllers
     public class UserRolesController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private IUserRolesService _userRolesService;
 
-        public UserRolesController(RestaurantContext context)
+        public UserRolesController(RestaurantContext context, IUserRolesService userRolesService)
         {
             _context = context;
-        }
-
-        [HttpGet("allUsersWithRoles")]
-        public async Task<ActionResult<IEnumerable<UserRoles>>> GetChosenUserRoles()
-        {
-            
-            return await _context.UserRoles
-                .Include((ur) => ur.User)
-                .Include((ur) => ur.Role)
-                .ToListAsync();
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserRoles>>> GetUserRoles()
-        {
-
-            return await _context.UserRoles.ToListAsync();
+            _userRolesService = userRolesService;
         }
         
-
+        [HttpPost("singleUserWithRoles/{id}")]
+        public async Task<User> GetUserRoles(int id)
+        {
+            return await _userRolesService.GetUserRoles(id);
+        }
+        
         // PUT: api/UserRoles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUserRoles(int id, UserRoles userRoles)
+        public async Task<IActionResult> PutUserRoles(int id, UserRolesDto userRoleDto)
         {
-            if (id != userRoles.Id)
+            UserRoles userRole = new UserRoles()
+            {
+                Id = id,
+                RoleId = userRoleDto.RoleId,
+                UserId = userRoleDto.UserId
+            };
+            
+            if (id != userRole.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(userRoles).State = EntityState.Modified;
+            _context.Entry(userRole).State = EntityState.Modified;
 
             try
             {
@@ -67,12 +66,18 @@ namespace RestoranApi.Controllers
         // POST: api/UserRoles
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<UserRoles>> PostUserRoles(UserRoles userRoles)
+        public async Task<ActionResult<UserRoles>> PostUserRoles([FromBody] UserRolesDto  userRolesDto)
         {
-            _context.UserRoles.Add(userRoles);
+            UserRoles userRole = new UserRoles()
+            {
+                RoleId = userRolesDto.RoleId,
+                UserId = userRolesDto.UserId
+            };
+            
+            _context.UserRoles.Add(userRole);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetUserRoles", new { id = userRoles.Id }, userRoles);
+            return CreatedAtAction("GetUserRoles", new { id = userRole.Id }, userRole);
         }
 
         // DELETE: api/UserRoles/5
@@ -94,6 +99,15 @@ namespace RestoranApi.Controllers
         private bool UserRolesExists(int id)
         {
             return (_context.UserRoles?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        private UserRolesDto UserRolesToDto(UserRoles userRoles)
+        {
+            return new UserRolesDto()
+            {
+                RoleId = userRoles.RoleId,
+                UserId = userRoles.UserId
+            };
         }
     }
 }
