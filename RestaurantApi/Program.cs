@@ -46,6 +46,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 #region services
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserRolesService, UserRolesService>();
+builder.Services.AddScoped<IRoleToDto, RoleToDtoService>();
 #endregion
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

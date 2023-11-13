@@ -24,25 +24,7 @@ namespace RestoranApi.Controllers
         {
             return await _userRolesService.GetUserRoles(id);
         }
-
-        [HttpGet("allUsersWithRoles")]
-        public async Task<ActionResult<IEnumerable<UserRoles>>> GetChosenUserRoles()
-        {
-            
-            return await _context.UserRoles
-                .Include((ur) => ur.User)
-                .Include((ur) => ur.Role)
-                .ToListAsync();
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<UserRoles>>> GetUserRoles()
-        {
-
-            return await _context.UserRoles.ToListAsync();
-        }
         
-
         // PUT: api/UserRoles/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

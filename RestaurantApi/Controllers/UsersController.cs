@@ -14,11 +14,13 @@ namespace RestoranApi.Controllers
     {
         private readonly RestaurantContext _context;
         private ILoginService _loginService;
+        private readonly IRoleToDto _roleToDtoService;
 
-        public UsersController(RestaurantContext context, ILoginService loginService)
+        public UsersController(RestaurantContext context, ILoginService loginService, IRoleToDto roleToDtoService)
         {
             _context = context;
             _loginService = loginService;
+            _roleToDtoService = roleToDtoService;
         }
         
         [AllowAnonymous]
@@ -29,6 +31,22 @@ namespace RestoranApi.Controllers
             string token = _loginService.CreateToken(user);
 
             return new JwtToken() {Token = token};
+        }
+        
+        [HttpGet("GetUsersWithAllTheirRoles")]
+        public async Task<ActionResult<IEnumerable<UserWithRolesDto>>> GetUserRoles()
+        {
+            
+            return await _context.Users.Include(u => u.Roles)
+                .Select(u => new UserWithRolesDto()
+                {
+                    Id = u.Id,
+                    Email = u.Email,
+                    CurrentDomainId = u.CurrentDomainId,
+                    Name = u.Name,
+                    Roles = _roleToDtoService.RoleToDto(u.Roles).ToList()
+                })
+                .ToListAsync();
         }
 
         // GET: api/Users

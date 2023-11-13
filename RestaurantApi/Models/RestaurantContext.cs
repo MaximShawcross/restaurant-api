@@ -18,6 +18,7 @@ public class RestaurantContext : DbContext
         modelBuilder.Entity<Role>().ToTable("stbl_System_Roles");
         modelBuilder.Entity<UserRoles>().ToTable("stbl_System_UserRoles");
 
+        // many-to-many
         modelBuilder.Entity<User>()
             .HasMany(u => u.Roles)
             .WithMany(r => r.Users)

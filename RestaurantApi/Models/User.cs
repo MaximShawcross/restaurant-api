@@ -9,6 +9,6 @@ public class User
     public DateTime? LastLoggedIn { get; set; }
     public string? Mobile_No { get; set; }
     public string? Password { get; set; }
-
+    
     public List<Role> Roles { get; } = new();
 }
