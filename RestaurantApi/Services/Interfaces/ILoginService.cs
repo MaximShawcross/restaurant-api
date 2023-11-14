@@ -5,7 +5,7 @@ namespace RestoranApi.Services.Interfaces;
 
 public interface ILoginService
 {
-    public string CreateToken(User user);
+    public Task<string> CreateToken(User user);
     public Task<User> Authenticate(UserLoginDto userDto);
-    public string Test();
+    public Task<bool> IsUserAdmin(int id);
 }

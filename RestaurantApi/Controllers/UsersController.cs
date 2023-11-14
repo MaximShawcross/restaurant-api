@@ -30,11 +30,12 @@ namespace RestoranApi.Controllers
         public async Task<JwtToken> Login([FromBody] UserLoginDto userDto)
         {
             User user = await _loginService.Authenticate(userDto);
-            string token = _loginService.CreateToken(user);
+            string token = await _loginService.CreateToken(user);
 
             return new JwtToken() {Token = token};
         }
         
+        [Authorize]
         [HttpGet("GetUsersWithAllTheirRoles")]
         public async Task<ActionResult<IEnumerable<UserWithRolesDto>>> GetUserRoles()
         {
@@ -51,6 +52,7 @@ namespace RestoranApi.Controllers
                 .ToListAsync();
         }
         
+        [Authorize]
         [HttpPost("AssignUserWithRole")]
         public async Task<ActionResult<UserRoles>> PostUserRoles([FromBody] UserRolesDto  userRolesDto)
         {
@@ -75,12 +77,16 @@ namespace RestoranApi.Controllers
         public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
             var users = await _context.Users.ToListAsync();
+            var isAdmin = HttpContext.User.Claims.FirstOrDefault(u => u.Type == "IsAdmin");
+
+            Console.WriteLine("IsAdmin: {0}", isAdmin);
             
             return Ok(UsersToDto(users));
         }
 
         
         // GET: api/Users/5
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
@@ -96,6 +102,7 @@ namespace RestoranApi.Controllers
 
         // PUT: api/Users/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUser(int id, User user)
         {
@@ -127,6 +134,7 @@ namespace RestoranApi.Controllers
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<User>> PostUser(User user)
         {
@@ -137,6 +145,7 @@ namespace RestoranApi.Controllers
         }
 
         // DELETE: api/Users/5
+        [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {

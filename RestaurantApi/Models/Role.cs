@@ -9,6 +9,7 @@ public class Role
     public int Id { get; set; }
     
     public string? RoleName { get; set; }
+    public bool IsAdmin { get; set; }
     public int? VacancyId { get; set; }
     public int? DomainId { get; set; }
 
