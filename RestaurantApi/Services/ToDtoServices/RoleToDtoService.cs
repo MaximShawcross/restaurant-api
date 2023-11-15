@@ -12,7 +12,7 @@ public class RoleToDtoService : IRoleToDto
         {
             RoleName = role.RoleName,
             DomainId = role.DomainId,
-            VacancyID = role.VacancyId
+            PostId = role.PostId
         };
     }
 
