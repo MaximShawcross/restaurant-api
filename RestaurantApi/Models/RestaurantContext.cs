@@ -27,6 +27,4 @@ public class RestaurantContext : DbContext
             .WithMany(r => r.Users)
             .UsingEntity<UserRoles>();
     }
-
-    public DbSet<RestoranApi.Models.Post> Post { get; set; } = default!;
 }

@@ -8,7 +8,7 @@ using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Controllers
 {
-    [Route("user")]
+    [Route("Users")]
     [ApiController]
     public class UsersController : ControllerBase
     {

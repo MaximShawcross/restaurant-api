@@ -20,6 +20,9 @@ public class UserRolesService : IUserRolesService
             .Include(u => u.Roles)
             .FirstAsync();
 
+        if (userWithRoles == null)
+            throw new NullReferenceException("User was not found");
+            
         return userWithRoles;
     }
 }
