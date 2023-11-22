@@ -11,4 +11,5 @@ public class User
     public string? Password { get; set; }
     
     public List<Role> Roles { get; } = new();
+    public List<Order> Orders { get; } = new();
 }
