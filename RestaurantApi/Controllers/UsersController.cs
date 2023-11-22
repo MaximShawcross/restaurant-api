@@ -98,9 +98,7 @@ namespace RestoranApi.Controllers
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)
-            {
                 return NotFound();
-            }
 
             return _userToDtoService.UserToDto(user);
         }
@@ -112,9 +110,7 @@ namespace RestoranApi.Controllers
         public async Task<IActionResult> PutUser(int id, User user)
         {
             if (id != user.Id)
-            {
                 return BadRequest();
-            }
 
             _context.Entry(user).State = EntityState.Modified;
 
@@ -125,13 +121,9 @@ namespace RestoranApi.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!UserExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
@@ -156,9 +148,7 @@ namespace RestoranApi.Controllers
         {
             var user = await _context.Users.FindAsync(id);
             if (user == null)
-            {
                 return NotFound();
-            }
 
             _context.Users.Remove(user);
             await _context.SaveChangesAsync();
