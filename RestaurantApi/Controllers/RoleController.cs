@@ -6,7 +6,7 @@ using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Controllers
 {
-    [Route("role")]
+    [Route("Roles")]
     [ApiController]
     public class RoleController : ControllerBase
     {
@@ -43,8 +43,6 @@ namespace RestoranApi.Controllers
 
             return NoContent();
         }
-
-        
 
         #endregion
 

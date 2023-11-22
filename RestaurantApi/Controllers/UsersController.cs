@@ -8,19 +8,24 @@ using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Controllers
 {
-    [Route("user")]
+    [Route("Users")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly RestaurantContext _context;
-        private ILoginService _loginService;
+        private readonly ILoginService _loginService;
         private readonly IRoleToDto _roleToDtoService;
+        private readonly IUserToDtoService _userToDtoService;
 
-        public UsersController(RestaurantContext context, ILoginService loginService, IRoleToDto roleToDtoService)
+        public UsersController(
+            RestaurantContext context, ILoginService loginService, 
+            IRoleToDto roleToDtoService, IUserToDtoService userToDtoService
+        )
         {
             _context = context;
             _loginService = loginService;
             _roleToDtoService = roleToDtoService;
+            _userToDtoService = userToDtoService;
         }
 
         #region CustomEndpoints
@@ -81,7 +86,7 @@ namespace RestoranApi.Controllers
 
             Console.WriteLine("IsAdmin: {0}", isAdmin);
             
-            return Ok(UsersToDto(users));
+            return Ok(_userToDtoService.UserToDto(users));
         }
 
         
@@ -97,7 +102,7 @@ namespace RestoranApi.Controllers
                 return NotFound();
             }
 
-            return UserToDto(user);
+            return _userToDtoService.UserToDto(user);
         }
 
         // PUT: api/Users/5
@@ -167,28 +172,7 @@ namespace RestoranApi.Controllers
         }
         #endregion
 
-        private static UserDto UserToDto(User user)
-        {
-            return new UserDto()
-            {
-                Id = user.Id,
-                Email = user.Email,
-                CurrentDomainId = user.CurrentDomainId,
-                Name = user.Name
-            };
-        }
-        
-        private static IEnumerable<UserDto> UsersToDto(IEnumerable<User> users)
-        {
-            List<UserDto> userDtoList = new List<UserDto>();
-
-            foreach (User user in users)
-            {
-                userDtoList.Add(UserToDto(user));
-            }
-
-            return userDtoList;
-        }
+       
         
 
     }

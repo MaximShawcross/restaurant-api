@@ -10,7 +10,7 @@ public class Role
     
     public string? RoleName { get; set; }
     public bool IsAdmin { get; set; }
-    public int? VacancyId { get; set; }
+    public int? PostId { get; set; }
     public int? DomainId { get; set; }
 
     public List<User?> Users { get; } = new();
