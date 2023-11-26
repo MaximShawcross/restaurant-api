@@ -1,9 +1,10 @@
 using RestoranApi.DTOs;
 using RestoranApi.Models;
+using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Services;
 
-public class OrderToDtoService
+public class OrderToDtoService : IOrderToDtoService
 {
     public OrderDto OrderToDto(Order order)
     {

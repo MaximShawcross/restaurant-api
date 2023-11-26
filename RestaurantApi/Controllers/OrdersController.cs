@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestoranApi.DTOs;
 using RestoranApi.Models;
+using RestoranApi.Services.Interfaces;
 
 namespace RestoranApi.Controllers
 {
@@ -16,10 +17,12 @@ namespace RestoranApi.Controllers
     public class OrdersController : ControllerBase
     {
         private readonly RestaurantContext _context;
+        private readonly IOrdersHandlerService _ordersHandlerService;
 
-        public OrdersController(RestaurantContext context)
+        public OrdersController(RestaurantContext context, IOrdersHandlerService ordersHandlerService)
         {
             _context = context;
+            _ordersHandlerService = ordersHandlerService;
         }
 
         #region CustomEndpoints
@@ -56,40 +59,33 @@ namespace RestoranApi.Controllers
         // PUT: api/Orders/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutOrder(int id, OrderDto orderDto)
+        public async Task<IActionResult> PutOrder(int id, [FromBody] OrderDto orderDto)
         {
-            var order = await _context.Orders.FindAsync(id);
-            
-            // null checks 
-            if (id != order.Id && !string.IsNullOrEmpty(order.ToString()))
-                return BadRequest("Entity was not found");
-            
-            //updating entity. HAS TO BE DONE
+            // var order = await _context.Orders.FindAsync(id);
+            //
+            // // null checks 
+            // if (id != order.Id && !string.IsNullOrEmpty(order.ToString()))
+            //     return BadRequest("Entity was not found");
+
+            // _context.Entry(order).State = EntityState.Modified;
+            //
             // try
             // {
-            //     order.
+            //     await _context.SaveChangesAsync();
             // }
-            // catch (Exception e)
+            // catch (DbUpdateConcurrencyException e)
             // {
-            //     throw new Exception(e.Message); 
+            //     if (!OrderExists(id))
+            //         return NotFound();
+            //     else
+            //         throw new DbUpdateConcurrencyException(e.Message);
             // }
 
+            // return NoContent();
 
-            _context.Entry(order).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OrderExists(id))
-                    return NotFound();
-                else
-                    throw;
-            }
-
-            return NoContent();
+            var order = await _ordersHandlerService.UpdateOrder(id, orderDto);
+            
+            return Ok(order);
         }
 
         // POST: api/Orders
