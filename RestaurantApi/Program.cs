@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Build.Execution;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using RestoranApi.Models;
@@ -46,6 +47,11 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
 #region services
 builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserRolesService, UserRolesService>();
+builder.Services.AddScoped<IOrdersHandlerService, OrdersHandlerService>();
+
+builder.Services.AddScoped<IEntityToDtoMapper, EntityToDtoMapper>();
+
+builder.Services.AddScoped<IOrderToDtoService, OrderToDtoService>();
 builder.Services.AddScoped<IRoleToDto, RoleToDtoService>();
 builder.Services.AddScoped<IUserToDtoService, UserToDtoService>();
 builder.Services.AddScoped<IPostToDtoService, PostToDtoServiceService>();
